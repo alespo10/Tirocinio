@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from Utility.log_help import log  # Import the log dictionary
+from Utility.log_help import log
 
 
 def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
@@ -18,7 +18,7 @@ def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
 
     dataset_name = os.path.splitext(os.path.basename(input_csv_path))[0]
 
-    # Check if dataset_name exists in log templates
+    # Controllo per vedere se il dataset_name esiste nel log_help
     if dataset_name not in log:
         raise ValueError(f"Dataset '{dataset_name}' not supported! Choose from {list(log.keys())}.")
 
@@ -47,7 +47,7 @@ def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
     # Loop through each event in the DataFrame
     for _, row in data_frame.iterrows():
         # Check if the case has changed
-        if row['case'] != current_case:
+        if row['case'] != current_case:         #Cambio per poter scrivere la traccia
             current_case = row['case']  # Update current case
 
             # Generate trace-level description using trace_template, if available
@@ -79,8 +79,6 @@ def create_output_file(dataset_name):
     print(f"File successfully created at: {file_path}")
     return file_path
 
-
-# Example function call with input file path and dataset name
 
 load_and_convert_log_to_txt(
     input_csv_path="/Users/alessandro/PycharmProjects/Tirocinio/Dataset/sepsis.csv",
