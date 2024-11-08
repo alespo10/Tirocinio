@@ -4,6 +4,11 @@ from Utility.log_help import log
 
 
 def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
+
+    if not os.path.exists(input_csv_path):
+        raise Exception(f"CSV file ({input_csv_path}) not found!")
+    data_frame = pd.read_csv(input_csv_path, sep=",")
+
     dataset_name = os.path.splitext(os.path.basename(input_csv_path))[0]
     if dataset_name not in log:
         raise ValueError(f"FileCSV '{dataset_name}' not supported! Choose from {list(log.keys())}.")
@@ -14,11 +19,6 @@ def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
     trace_template = template_info['trace_template']
     event_attributes = template_info['event_attribute']
     trace_attributes = template_info['trace_attribute']
-
-
-    if not os.path.exists(input_csv_path):
-        raise Exception(f"CSV file ({input_csv_path}) not found!")
-    data_frame = pd.read_csv(input_csv_path, sep=",")
 
     if activities_to_remove is not None:
         data_frame = data_frame[~data_frame["activity"].isin(activities_to_remove)]
