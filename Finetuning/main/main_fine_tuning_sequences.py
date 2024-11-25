@@ -15,7 +15,7 @@ from Finetuning.generators.generate_sequences import generate_sequences
 from Finetuning.support import support
 from Finetuning.support.support import cprint, Color, base_directory, models_folder
 from Finetuning.trainers.reinforcement_learning_trainer import reinforcement_learning_train_model
-from Finetuning.trainers.standard_trainer import standard_train_model
+from Finetuning.trainers.standard_trainer import standard_train_model, plot_loss
 
 logging.getLogger().setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")
@@ -124,11 +124,28 @@ if std_train:
     cprint("Training model (std)...", Color.BLUE)
     tracker = EmissionsTracker()
     tracker.start()
-    standard_train_model(model, tokenizer, optimizer, scheduler, sequence_loader_train, std_epochs, std_batch_size)
+
+    # Specifica il percorso per il file di output della loss
+    loss_file_path = f"{base_directory}/outputs/loss_data_{dataset_name}.csv"
+
+    standard_train_model(
+        model,
+        tokenizer,
+        optimizer,
+        scheduler,
+        sequence_loader_train,
+        sequence_loader_test,  # Passa il test set per il calcolo della loss
+        std_epochs,
+        std_batch_size,
+        loss_file_path
+    )
     tracker.stop()
 
+    # Crea il grafico dalla loss salvata
+    plot_loss(loss_file_path)
 else:
     cprint("Skipping standard training model...", Color.MAGENTA)
+
 
 if rl_train:
     model = support.load_model("fine_tuned")
