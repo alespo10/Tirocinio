@@ -87,7 +87,7 @@ def _read_synthesized_dXX(data_frame, seed):
 
 def load_dataset(dataset_name, decl_path=None, decl_min_support=0.1, decl_max_support=0.8, decl_itemsets_support=0.9, decl_max_declare_cardinality=3, shuffle=True, decl_required=False, activities_to_remove=None, seed=None):
     # Percorso del file txt basato sul nome del dataset
-    dataset_file_name = f"/content/SequencesGraphConstrained/Finetuning/Data/{dataset_name}.txt"  # Assumendo che i file txt siano in una cartella "Dataset"
+    dataset_file_name = f"/content/Tirocinio/Finetuning/Data/{dataset_name}.txt"  # Assumendo che i file txt siano in una cartella "Dataset"
 
     # Controlla l'esistenza del file txt
     if not os.path.exists(dataset_file_name):

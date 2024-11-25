@@ -28,7 +28,7 @@ from peft import LoraConfig, get_peft_model
 
 
 
-base_directory = "/content/SequencesGraphConstrained"
+base_directory = "/content/Tirocinio"
 models_folder = f"{base_directory}/trained_models"
 
 device = "cpu"
