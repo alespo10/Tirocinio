@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import random
-from Utility.log_help import log
+from Preprocessing.Utility.log_help import log
 
 transition_phrases = [
     "Later",
@@ -85,13 +85,13 @@ def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
 
 
 def create_output_file(dataset_name):
-    directory_path = "/Users/alessandro/PycharmProjects/Tirocinio/Dataset"
+    directory_path = "/Data"
     file_path = os.path.join(directory_path, f"{dataset_name}.txt")
     print(f"File successfully created at: {file_path}")
     return file_path
 
 
 load_and_convert_log_to_txt(
-    input_csv_path="/Users/alessandro/PycharmProjects/Tirocinio/Input/mip.csv",
+    input_csv_path="/Preprocessing/Input/mip.csv",
     # activities_to_remove=["Activity A", "Activity B"]
 )
