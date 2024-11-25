@@ -24,6 +24,9 @@ from scipy.optimize import linear_sum_assignment
 from enum import Enum
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from peft import LoraConfig, get_peft_model
+
+
 
 base_directory = "/content/SequencesGraphConstrained"
 models_folder = f"{base_directory}/trained_models"
@@ -458,18 +461,18 @@ def load_model(type):
         # pretrained model
         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
-        # pretrained with adapter model
-        #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-        #peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
-        #model = get_peft_model(model, peft_config)
+        #pretrained with adapter model
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+        model = get_peft_model(model, peft_config)
 
         # untrained model
         #config = AutoConfig.from_pretrained(MODEL_NAME)
         #model = AutoModelForCausalLM.from_config(config)
 
         # custom configured model
-        config = GPT2Config(n_layer=5, n_head=3)
-        model = AutoModelForCausalLM.from_config(config)
+        #config = GPT2Config(n_layer=5, n_head=3)
+        #model = AutoModelForCausalLM.from_config(config)
 
     else:
         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")

@@ -123,4 +123,5 @@ def standard_train_model(model, tokenizer, optimizer, scheduler, train_dataloade
 
     # Salva i dati della loss su file
     save_loss_to_file(loss_data, loss_file)
+    support.save_model(model, tokenizer, "fine_tuned")
     print(f"Loss data saved to {loss_file}")
