@@ -274,32 +274,10 @@ def sequence2numpy(sequence):
     return np_sequence
 
 
-# def sequences2numpy(sequences):
-#     np_sequences = []
-#     for i, value in enumerate(sequences):
-#         np_sequences.append(sequence2numpy(value["prompt"] + value["chosen"] if isinstance(value, dict) else value))
-#
-#     return np_sequences
-
 def sequences2numpy(sequences):
     np_sequences = []
-    for value in sequences:
-        # Ottieni la sequenza come stringa completa
-        if isinstance(value, dict):
-            full_sequence = value["prompt"] + value["chosen"]
-        else:
-            full_sequence = value
-
-        # Estrai solo i nomi delle attività
-        activities = []
-        for sentence in full_sequence.split(". "):  # Divide la stringa in frasi
-            if "the activity" in sentence:
-                parts = sentence.split(" ")
-                activity_name = " ".join(parts[2:4])  # Ottieni solo il nome dell'attività
-                activities.append(activity_name)
-
-        # Converte la lista di attività in un formato compatibile con numpy
-        np_sequences.append(sequence2numpy(" → ".join(activities)))
+    for i, value in enumerate(sequences):
+        np_sequences.append(sequence2numpy(value["prompt"] + value["chosen"] if isinstance(value, dict) else value))
 
     return np_sequences
 
