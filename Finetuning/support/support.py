@@ -281,6 +281,29 @@ def sequences2numpy(sequences):
 
     return np_sequences
 
+""""
+def sequences2numpy(sequences):
+    np_sequences = []
+    for value in sequences:
+        # Ottieni la sequenza come stringa completa
+        if isinstance(value, dict):
+            full_sequence = value["prompt"] + value["chosen"]
+        else:
+            full_sequence = value
+
+        # Estrai solo i nomi delle attività
+        activities = []
+        for sentence in full_sequence.split(". "):  # Divide la stringa in frasi
+            if "the activity" in sentence:
+                parts = sentence.split(" ")
+                activity_name = " ".join(parts[2:4])  # Ottieni solo il nome dell'attività
+                activities.append(activity_name)
+
+        # Converte la lista di attività in un formato compatibile con numpy
+        np_sequences.append(support.sequence2numpy(" → ".join(activities)))
+
+    return np_sequences
+"""
 
 def constraint2string(constraint):
     activities = constraint["activities"]
@@ -488,12 +511,13 @@ def load_model(type):
     if type == "base":
         # Pre-trained base model
         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+        print(model)
 
         # PEFT configuration (LoRA)
         peft_config = LoraConfig(
             r=16, lora_alpha=16, lora_dropout=0.05,
             bias="none", task_type="CAUSAL_LM",
-            target_modules=["query_proj", "value_proj", "key_proj", "output_proj"]  # Moduli di PHI-2
+            target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
         )
         model = get_peft_model(model, peft_config)
 
