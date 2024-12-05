@@ -43,10 +43,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
-MODEL_NAME = "microsoft/phi-2"
-saving_model_name = "mphi2_sequencer_ft_clean"
-# MODEL_NAME = "gpt2"
-# saving_model_name = "gpt2_sequencer_ft_clean"
+#MODEL_NAME = "microsoft/phi-2"
+#saving_model_name = "mphi2_sequencer_ft_clean"
+MODEL_NAME = "gpt2"
+saving_model_name = "gpt2_sequencer_ft_clean"
 
 MIN_SEQ_LEN = 100
 MAX_SEQ_LEN = 400
