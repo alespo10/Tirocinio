@@ -478,51 +478,26 @@ def save_model(model, tokenizer, type):
     model.save_pretrained(model_path)
     #tokenizer.save_pretrained(model_path)
 
-#
-# def load_model(type):
-#     if type == "base":
-#         # pretrained model
-#         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#
-#         #pretrained with adapter model
-#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#         peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
-#         model = get_peft_model(model, peft_config)
-#
-#         # untrained model
-#         #config = AutoConfig.from_pretrained(MODEL_NAME)
-#         #model = AutoModelForCausalLM.from_config(config)
-#
-#         # custom configured model
-#         #config = GPT2Config(n_layer=5, n_head=3)
-#         #model = AutoModelForCausalLM.from_config(config)
-#
-#     else:
-#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-#         model = AutoModelForCausalLM.from_pretrained(model_path)
-#
-#     model = model.to(device)
-#     model.config.use_cache = False
-#     model.train()
-#     return model
-
 
 def load_model(type):
     if type == "base":
-        # Pre-trained base model
-        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-        print(model)
+        # pretrained model
+        #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
-        # PEFT configuration (LoRA)
-        peft_config = LoraConfig(
-            r=16, lora_alpha=16, lora_dropout=0.05,
-            bias="none", task_type="CAUSAL_LM",
-            target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
-        )
+        #pretrained with adapter model
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
         model = get_peft_model(model, peft_config)
 
+        # untrained model
+        #config = AutoConfig.from_pretrained(MODEL_NAME)
+        #model = AutoModelForCausalLM.from_config(config)
+
+        # custom configured model
+        #config = GPT2Config(n_layer=5, n_head=3)
+        #model = AutoModelForCausalLM.from_config(config)
+
     else:
-        # Fine-tuned model path
         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
         model = AutoModelForCausalLM.from_pretrained(model_path)
 
@@ -532,7 +507,56 @@ def load_model(type):
     return model
 
 
+# Microsoft/phi-2
+# def load_model(type):
+#     if type == "base":
+#         # Pre-trained base model
+#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#         print(model)
+#
+#         # PEFT configuration (LoRA)
+#         peft_config = LoraConfig(
+#             r=16, lora_alpha=16, lora_dropout=0.05,
+#             bias="none", task_type="CAUSAL_LM",
+#             target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
+#         )
+#         model = get_peft_model(model, peft_config)
+#
+#     else:
+#         # Fine-tuned model path
+#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+#         model = AutoModelForCausalLM.from_pretrained(model_path)
+#
+#     model = model.to(device)
+#     model.config.use_cache = False
+#     model.train()
+#     return model
 
+
+
+#CHAT
+def load_tokenizer(observation_list):
+    tokenizer_path = os.path.join(models_folder, f"tokenizer_{saving_model_name}_{dataset_name}.tk")
+    if os.path.exists(tokenizer_path):
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+
+    else:
+        dataset = Dataset.from_list(observation_list)
+
+        def get_training_corpus():
+            for start_idx in range(0, len(dataset)):
+                samples = dataset[start_idx]
+                yield samples["prompt"] + samples["chosen"]
+
+        old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        training_corpus = get_training_corpus()
+        tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
+        special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
+        tokenizer.add_special_tokens(special_tokens_dict)
+        tokenizer.save_pretrained(tokenizer_path)
+
+    tokenizer.pad_token = DELIM_EOS
+    return tokenizer
 
 #
 # def load_tokenizer(observation_list):
@@ -551,37 +575,14 @@ def load_model(type):
 #         old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 #         training_corpus = get_training_corpus()
 #         tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
+#
+#         # Aggiunta di token speciali specifici
 #         special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
 #         tokenizer.add_special_tokens(special_tokens_dict)
 #         tokenizer.save_pretrained(tokenizer_path)
 #
-#     tokenizer.pad_token = DELIM_EOS
+#     tokenizer.pad_token = DELIM_EOS  # Imposta il token di padding
 #     return tokenizer
-
-def load_tokenizer(observation_list):
-    tokenizer_path = os.path.join(models_folder, f"tokenizer_{saving_model_name}_{dataset_name}.tk")
-    if os.path.exists(tokenizer_path):
-        tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-
-    else:
-        dataset = Dataset.from_list(observation_list)
-
-        def get_training_corpus():
-            for start_idx in range(0, len(dataset)):
-                samples = dataset[start_idx]
-                yield samples["prompt"] + samples["chosen"]
-
-        old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        training_corpus = get_training_corpus()
-        tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
-
-        # Aggiunta di token speciali specifici
-        special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
-        tokenizer.add_special_tokens(special_tokens_dict)
-        tokenizer.save_pretrained(tokenizer_path)
-
-    tokenizer.pad_token = DELIM_EOS  # Imposta il token di padding
-    return tokenizer
 
 
 def add_available_templates(template):
