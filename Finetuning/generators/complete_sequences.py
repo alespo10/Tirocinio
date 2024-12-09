@@ -126,3 +126,4 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
             cprint(f"CFLD metric between the original test set and generated set of sequences (lower is better): {cfld_metric:9.4f}", Color.MAGENTA)
             cprint(f"CFLS metric between the original test set and generated set of sequences (higher is better): {1 - cfld_metric:9.4f}", Color.MAGENTA)
+
