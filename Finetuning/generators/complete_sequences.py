@@ -4,6 +4,7 @@ import csv
 from Finetuning.support import support
 from Finetuning.support.support import find_middle_index, MAX_SEQ_LEN, choose_from_top, DELIM_EOS, get_string_between, DELIM_SOC, DELIM_EOC, DELIM_SOS, Color, cprint
 
+
 def complete_sequences(model, tokenizer, validation_list, test_dataset, output_file_path, path_table=None, supply_constraints=True, verbose=True, avoid_cfls_calculation=False):
     counter_satisfied_all = 0
     counter_satisfied_input = 0
@@ -126,4 +127,3 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
             cprint(f"CFLD metric between the original test set and generated set of sequences (lower is better): {cfld_metric:9.4f}", Color.MAGENTA)
             cprint(f"CFLS metric between the original test set and generated set of sequences (higher is better): {1 - cfld_metric:9.4f}", Color.MAGENTA)
-

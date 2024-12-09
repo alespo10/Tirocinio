@@ -1,5 +1,6 @@
 import os
 import torch
+import random
 
 from Finetuning.support import support
 from Finetuning.support.support import choose_from_top, DELIM_EOS, DELIM_SOP, DELIM_SOC, DELIM_EOC, DELIM_SOS, cprint, Color
