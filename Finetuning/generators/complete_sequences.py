@@ -70,6 +70,7 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 output_list = list(cur_ids.squeeze().to("cpu").numpy())
                 output_text = tokenizer.decode(output_list)
+                #Filtrare output_text per farlo diventare una lista di attivita che si susseguono.
                 np_generated_list.append(support.sequence2numpy(output_text))
                 constraints = get_string_between(DELIM_SOC, DELIM_EOC, output_text)
                 events = get_string_between(DELIM_SOS, DELIM_EOS, output_text)
