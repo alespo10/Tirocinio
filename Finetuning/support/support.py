@@ -8,7 +8,6 @@ import re
 import os
 
 from accelerate.utils import MODEL_NAME
-from peft import LoraConfig, get_peft_model
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import csv
@@ -25,11 +24,14 @@ from scipy.optimize import linear_sum_assignment
 from enum import Enum
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from peft import LoraConfig, get_peft_model
+
+
 
 base_directory = "/content/Tirocinio"
 models_folder = f"{base_directory}/trained_models"
 
-device = "cuda"
+device = "cpu"
 if torch.cuda.is_available():
     device = "cuda"
 
@@ -459,7 +461,7 @@ def load_model(type):
         # pretrained model
         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
-        # pretrained with adapter model
+        #pretrained with adapter model
         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
         peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
         model = get_peft_model(model, peft_config)
@@ -552,56 +554,3 @@ def send_telegram_ending_notification():
     message = "The experiment was finished!"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={chat_id}&text={message}"
     print(requests.get(url).json())
-
-# Microsoft/phi-2
-# def load_model(type):
-#     if type == "base":
-#         # Pre-trained base model
-#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#         print(model)
-#
-#         # PEFT configuration (LoRA)
-#         peft_config = LoraConfig(
-#             r=16, lora_alpha=16, lora_dropout=0.05,
-#             bias="none", task_type="CAUSAL_LM",
-#             target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
-#         )
-#         model = get_peft_model(model, peft_config)
-#
-#     else:
-#         # Fine-tuned model path
-#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-#         model = AutoModelForCausalLM.from_pretrained(model_path)
-#
-#     model = model.to(device)
-#     model.config.use_cache = False
-#     model.train()
-#     return model
-
-
-#
-# def load_tokenizer(observation_list):
-#     tokenizer_path = os.path.join(models_folder, f"tokenizer_{saving_model_name}_{dataset_name}.tk")
-#     if os.path.exists(tokenizer_path):
-#         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-#
-#     else:
-#         dataset = Dataset.from_list(observation_list)
-#
-#         def get_training_corpus():
-#             for start_idx in range(0, len(dataset)):
-#                 samples = dataset[start_idx]
-#                 yield samples["prompt"] + samples["chosen"]
-#
-#         old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-#         training_corpus = get_training_corpus()
-#         tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
-#
-#         # Aggiunta di token speciali specifici
-#         special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
-#         tokenizer.add_special_tokens(special_tokens_dict)
-#         tokenizer.save_pretrained(tokenizer_path)
-#
-#     tokenizer.pad_token = DELIM_EOS  # Imposta il token di padding
-#     return tokenizer
-

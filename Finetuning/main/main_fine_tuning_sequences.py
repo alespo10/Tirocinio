@@ -30,7 +30,7 @@ fast_approximated_cfls_calculation = False
 
 std_train = True
 std_evaluate = True
-std_epochs = 1
+std_epochs = 3
 std_batch_size = 16
 std_learning_rate = 3e-5
 std_warmup_steps = 5000
@@ -157,7 +157,6 @@ else:
 
 ################### Evaluating model ###################
 
-
 if fast_approximated_cfls_calculation:
     evaluation_observation_list = test_observation_list
 
@@ -174,7 +173,7 @@ if std_evaluate:
     cprint("Generating sequences from scratch with constraints...", Color.BLUE)
     #generate_sequences(model, tokenizer, evaluation_observation_list, n_to_generate, generated_sequences_std_wc_output_file_path, generated_sequences_std_wc_table_output_file_path, constraints=dataset.get_constraints(), verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
     cprint("Completing sequences without constraints...", Color.BLUE)
-    complete_sequences(model, tokenizer, evaluation_observation_list, test_set, completed_sequences_std_woc_output_file_path, supply_constraints=False, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
+    complete_sequences(model, tokenizer, evaluation_observation_list, rl_test_set, completed_sequences_std_woc_output_file_path, supply_constraints=False, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
     cprint("Completing sequences with constraints...", Color.BLUE)
     #complete_sequences(model, tokenizer, evaluation_observation_list, rl_test_set, completed_sequences_std_woc_output_file_path, completed_sequences_std_wc_table_output_file_path, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
 
