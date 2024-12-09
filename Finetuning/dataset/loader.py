@@ -106,70 +106,70 @@ def load_dataset(dataset_name, decl_path=None, decl_min_support=0.1, decl_max_su
 
     return sequences_list, discovered_model
 
-#
-# def build_observation_list(dataset, load=False, path=None):
-#     if load:
-#         result = pickle.load(open(path, "rb"))
-#         for sample in result:
-#             for constraint in sample["constraints"]:
-#                 support.add_available_templates(constraint["template"])
-#
-#         return result
-#
-#     else:
-#         with FillingCirclesBar("Building observation list (dataset for RL):", max=len(dataset)) as bar:
-#             observation_list = []
-#             for sample in iter(dataset):
-#                 input = sample[:find_middle_index(sample)]
-#                 output = sample[find_middle_index(sample) + 1:]
-#                 observation_list.append({"prompt": input, "input": input, "chosen": output, "constraints": "", "rejected": ""})
-#                 bar.next()
-#
-#             bar.finish()
-#             pickle.dump(observation_list, open(path, "wb"))
-#             return observation_list
-
 
 def build_observation_list(dataset, load=False, path=None):
     if load:
-        # Carica la lista di osservazioni salvata
         result = pickle.load(open(path, "rb"))
+        for sample in result:
+            for constraint in sample["constraints"]:
+                support.add_available_templates(constraint["template"])
+
         return result
 
     else:
         with FillingCirclesBar("Building observation list (dataset for RL):", max=len(dataset)) as bar:
             observation_list = []
+            for sample in iter(dataset):
+                input = sample[:find_middle_index(sample)]
+                output = sample[find_middle_index(sample) + 1:]
+                observation_list.append({"prompt": input, "input": input, "chosen": output, "constraints": "", "rejected": ""})
+                bar.next()
 
-            for sample in dataset:  # Itera sulle frasi semantiche del dataset
-                activities = []  # Lista per memorizzare le attività estratte
-
-                # Estrai le attività dalla frase semantica
-                for sentence in sample.split(". "):  # Dividi in frasi
-                    if "the activity" in sentence:  # Cerca le frasi con "the activity"
-                        parts = sentence.split(" ")
-                        activity_name = " ".join(parts[2:4])  # Ottieni solo il nome dell'attività
-                        activities.append(activity_name)
-
-                # Costruisci l'input e l'output basandoti sulle attività
-                middle_index = find_middle_index(activities)
-                input_sequence = " → ".join(activities[:middle_index])  # Attività iniziali
-                output_sequence = " → ".join(activities[middle_index:])  # Attività successive
-
-                # Aggiungi l'osservazione alla lista
-                observation_list.append({
-                    "prompt": input_sequence,  # Input per il modello
-                    "input": input_sequence,  # Una copia di "prompt"
-                    "chosen": output_sequence,  # Output previsto
-                    "constraints": "",  # Campo vuoto per vincoli
-                    "rejected": ""  # Campo vuoto per sequenze scartate
-                })
-
-                bar.next()  # Avanza la barra di progresso
-
-            bar.finish()  # Completa la barra di progresso
-
-            # Salva la lista in un file pickle
-            if path:
-                pickle.dump(observation_list, open(path, "wb"))
-
+            bar.finish()
+            pickle.dump(observation_list, open(path, "wb"))
             return observation_list
+
+#
+# def build_observation_list(dataset, load=False, path=None):
+#     if load:
+#         # Carica la lista di osservazioni salvata
+#         result = pickle.load(open(path, "rb"))
+#         return result
+#
+#     else:
+#         with FillingCirclesBar("Building observation list (dataset for RL):", max=len(dataset)) as bar:
+#             observation_list = []
+#
+#             for sample in dataset:  # Itera sulle frasi semantiche del dataset
+#                 activities = []  # Lista per memorizzare le attività estratte
+#
+#                 # Estrai le attività dalla frase semantica
+#                 for sentence in sample.split(". "):  # Dividi in frasi
+#                     if "the activity" in sentence:  # Cerca le frasi con "the activity"
+#                         parts = sentence.split(" ")
+#                         activity_name = " ".join(parts[2:4])  # Ottieni solo il nome dell'attività
+#                         activities.append(activity_name)
+#
+#                 # Costruisci l'input e l'output basandoti sulle attività
+#                 middle_index = find_middle_index(activities)
+#                 input_sequence = " → ".join(activities[:middle_index])  # Attività iniziali
+#                 output_sequence = " → ".join(activities[middle_index:])  # Attività successive
+#
+#                 # Aggiungi l'osservazione alla lista
+#                 observation_list.append({
+#                     "prompt": input_sequence,  # Input per il modello
+#                     "input": input_sequence,  # Una copia di "prompt"
+#                     "chosen": output_sequence,  # Output previsto
+#                     "constraints": "",  # Campo vuoto per vincoli
+#                     "rejected": ""  # Campo vuoto per sequenze scartate
+#                 })
+#
+#                 bar.next()  # Avanza la barra di progresso
+#
+#             bar.finish()  # Completa la barra di progresso
+#
+#             # Salva la lista in un file pickle
+#             if path:
+#                 pickle.dump(observation_list, open(path, "wb"))
+#
+#             return observation_list

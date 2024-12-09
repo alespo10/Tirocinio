@@ -265,7 +265,8 @@ def _extract_activities(text):
 
 
 def sequence2numpy(sequence):
-    activities = _extract_activities(get_string_between(DELIM_SOS, DELIM_EOS, sequence))
+    activities = get_string_between(DELIM_SOS, DELIM_EOS, sequence)
+    print(activities)
     np_sequence = numpy.zeros(len(activities))
     for i in range(len(activities)):
         if activities[i] != "":
