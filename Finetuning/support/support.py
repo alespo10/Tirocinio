@@ -258,14 +258,42 @@ def _clean_activity(activity):
 
     return ""
 
+def extract_unique_activities(file_path):
+    unique_activities = set()
+    # Apri il file CSV e leggi riga per riga
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader)  # Salta l'intestazione se presente
+
+        for row in reader:
+            if len(row) >= 2:  # Assicurati che ci sia una seconda colonna
+                activity = row[1].strip()  # Rimuovi spazi superflui
+                unique_activities.add(activity)
+
+    # Converti il set in una lista ordinata
+    return sorted(unique_activities)
+
+attDaCsv = "/Users/alessandro/PycharmProjects/Tirocinio/Preprocessing/Input/helpdesk.csv"
+
+
 
 def _extract_activities(text):
     text = text.replace("Activity_", " Activity_")
     return [_clean_activity(i) for i in text.split(" ") if i != ""]
 
+def extract_activities_from_text(text, activities_list):
+    extracted_activities = []
+    for match in re.finditer(rf"\b({'|'.join(map(re.escape, activities_list))})\b", text):
+        extracted_activities.append(match.group(0))
+    return extracted_activities
+
 
 def sequence2numpy(sequence):
-    activities = _extract_activities(get_string_between(DELIM_SOS, DELIM_EOS, sequence))
+    print("Sequenza di testo prima di essere modificata")
+    print(sequence)
+    #activities = _extract_activities(get_string_between(DELIM_SOS, DELIM_EOS, sequence))
+    activities = extract_activities_from_text(sequence,extract_unique_activities(attDaCsv))
+    print(activities)
     np_sequence = numpy.zeros(len(activities))
     for i in range(len(activities)):
         if activities[i] != "":

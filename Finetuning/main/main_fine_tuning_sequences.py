@@ -67,9 +67,13 @@ else:
     activities_to_keep = ["Activity_A", "Activity_B", "Activity_C", "Activity_D", "Activity_E", "Activity_F", "Activity_G", "Activity_H", "Activity_I", "Activity_J", "Activity_K", "Activity_L", "Activity_M", "Activity_N", "Activity_O", "Activity_P", "Activity_Q", "Activity_R", "Activity_S", "Activity_T", "Activity_U", "Activity_V", "Activity_W", "Activity_X", "Activity_Y", "Activity_Z", "Activity_AA", "Activity_AB", "Activity_AC", "Activity_AD", "Activity_AE", "Activity_AF", "Activity_AG", "Activity_AH", "Activity_AI", "Activity_AJ"]
     activities_to_remove = []
 
-completed_sequences_std_woc_output_file_path = f"{base_directory}/outputs/completed_std_woc_{dataset_name}_ep_{std_epochs}.csv"
+
+
+
+
+completed_sequences_std_woc_output_file_path = f"{base_directory}/outputs/completed_std_woc_{dataset_name}_ep_{std_epochs}.csv" #
 completed_sequences_std_wc_output_file_path = f"{base_directory}/outputs/completed_std_wc_{dataset_name}_ep_{std_epochs}.csv"
-generated_sequences_std_woc_output_file_path = f"{base_directory}/outputs/generated_std_woc_{dataset_name}_ep_{std_epochs}.txt"
+generated_sequences_std_woc_output_file_path = f"{base_directory}/outputs/generated_std_woc_{dataset_name}_ep_{std_epochs}.txt" #
 generated_sequences_std_wc_output_file_path = f"{base_directory}/outputs/generated_std_wc_{dataset_name}_ep_{std_epochs}.txt"
 generated_sequences_std_wc_table_output_file_path = f"{base_directory}/outputs/table_generated_std_wc_{dataset_name}_ep_{std_epochs}_al_{rl_algorithm}.csv"
 completed_sequences_std_wc_table_output_file_path = f"{base_directory}/outputs/table_completed_std_wc_{dataset_name}_ep_{std_epochs}_al_{rl_algorithm}.csv"
@@ -173,7 +177,7 @@ if std_evaluate:
     cprint("Generating sequences from scratch with constraints...", Color.BLUE)
     #generate_sequences(model, tokenizer, evaluation_observation_list, n_to_generate, generated_sequences_std_wc_output_file_path, generated_sequences_std_wc_table_output_file_path, constraints=dataset.get_constraints(), verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
     cprint("Completing sequences without constraints...", Color.BLUE)
-    complete_sequences(model, tokenizer, evaluation_observation_list, test_set, completed_sequences_std_woc_output_file_path, supply_constraints=False, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
+    complete_sequences(model, tokenizer, evaluation_observation_list, rl_test_set, completed_sequences_std_woc_output_file_path, supply_constraints=False, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
     cprint("Completing sequences with constraints...", Color.BLUE)
     #complete_sequences(model, tokenizer, evaluation_observation_list, rl_test_set, completed_sequences_std_woc_output_file_path, completed_sequences_std_wc_table_output_file_path, verbose=verbose, avoid_cfls_calculation=avoid_cfls_calculation)
 
