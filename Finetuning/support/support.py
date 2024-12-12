@@ -9,6 +9,8 @@ import os
 
 from accelerate.utils import MODEL_NAME
 
+#from Finetuning.trainers.standard_trainer import save_loss_to_file
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import csv
 import requests
@@ -43,10 +45,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
+MODEL_NAME = "gpt2-large"
+saving_model_name = "gpt2large_sequencer_ft_clean"
 #MODEL_NAME = "microsoft/phi-2"
 #saving_model_name = "mphi2_sequencer_ft_clean"
-MODEL_NAME = "gpt2"
-saving_model_name = "gpt2_sequencer_ft_clean"
+#MODEL_NAME = "gpt2"
+#saving_model_name = "gpt2_sequencer_ft_clean"
 
 MIN_SEQ_LEN = 100
 MAX_SEQ_LEN = 400
@@ -484,6 +488,32 @@ def save_model(model, tokenizer, type):
     #tokenizer.save_pretrained(model_path)
 
 
+
+# Microsoft/phi-2
+# def load_model(type):
+#     if type == "base":
+#         # Pre-trained base model
+#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#         print(model)
+#
+#         # PEFT configuration (LoRA)
+#         peft_config = LoraConfig(
+#             r=16, lora_alpha=16, lora_dropout=0.05,
+#             bias="none", task_type="CAUSAL_LM",
+#             target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
+#         )
+#         model = get_peft_model(model, peft_config)
+#
+#     else:
+#         # Fine-tuned model path
+#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+#         model = AutoModelForCausalLM.from_pretrained(model_path)
+#
+#     model = model.to(device)
+#     model.config.use_cache = False
+#     model.train()
+#     return model
+
 def load_model(type):
     if type == "base":
         # pretrained model
@@ -510,6 +540,33 @@ def load_model(type):
     model.config.use_cache = False
     model.train()
     return model
+
+
+#
+# def load_tokenizer(observation_list):
+#     tokenizer_path = os.path.join(models_folder, f"tokenizer_{saving_model_name}_{dataset_name}.tk")
+#     if os.path.exists(tokenizer_path):
+#         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+#
+#     else:
+#         dataset = Dataset.from_list(observation_list)
+#
+#         def get_training_corpus():
+#             for start_idx in range(0, len(dataset)):
+#                 samples = dataset[start_idx]
+#                 yield samples["prompt"] + samples["chosen"]
+#
+#         old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+#         training_corpus = get_training_corpus()
+#         tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
+#
+#         # Aggiunta di token speciali specifici
+#         special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
+#         tokenizer.add_special_tokens(special_tokens_dict)
+#         tokenizer.save_pretrained(tokenizer_path)
+#
+#     tokenizer.pad_token = DELIM_EOS  # Imposta il token di padding
+#     return tokenizer
 
 
 def load_tokenizer(observation_list):
