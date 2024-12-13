@@ -277,7 +277,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/Users/alessandro/PycharmProjects/Tirocinio/Preprocessing/Input/helpdesk.csv"
+attDaCsv = "/content/Tirocinio/Preprocessing/Input/helpdesk.csv"
 
 
 
