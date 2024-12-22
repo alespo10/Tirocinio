@@ -293,12 +293,9 @@ def extract_activities_from_text(text, activities_list):
 
 
 def sequence2numpy(sequence):
-    print("Sequenza di testo prima di essere modificata")
-    print(sequence)
     #activities = _extract_activities(get_string_between(DELIM_SOS, DELIM_EOS, sequence))
     lista = extract_unique_activities(attDaCsv)
     activities = extract_activities_from_text(sequence,lista)
-    print(activities)
     np_sequence = numpy.zeros(len(activities))
     for i in range(len(activities)):
         if activities[i] != "":
