@@ -30,7 +30,7 @@ fast_approximated_cfls_calculation = False
 
 std_train = True
 std_evaluate = True
-std_epochs = 16
+std_epochs = 1
 std_batch_size = 16
 std_learning_rate = 3e-5
 std_warmup_steps = 5000
@@ -126,8 +126,7 @@ tokenizer = support.load_tokenizer(train_observation_list)
 
 if std_train:
     cprint("Training model (std)...", Color.BLUE)
-    tracker = EmissionsTracker()
-    tracker.start()
+
 
     # Specifica il percorso per il file di output della loss
     loss_file_path = f"{base_directory}/outputs/loss_data_{dataset_name}.csv"
@@ -143,7 +142,6 @@ if std_train:
         std_batch_size,
         loss_file_path
     )
-    tracker.stop()
 
     # Crea il grafico dalla loss salvata
     plot_loss(loss_file_path)
