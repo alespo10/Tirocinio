@@ -30,7 +30,7 @@ from peft import LoraConfig, get_peft_model
 
 
 
-base_directory = "/content/Tirocinio"
+base_directory = "/kaggle/working/Tirocinio"
 models_folder = f"{base_directory}/trained_models"
 
 device = "cpu"
@@ -277,7 +277,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/content/Tirocinio/Preprocessing/Input/helpdesk.csv"
+attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/helpdesk.csv"
 
 
 
