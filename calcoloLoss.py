@@ -54,5 +54,5 @@ class LossPlotter:
 
 # Per eseguire il programma:
 if __name__ == "__main__":
-    file_path = '/Users/alessandro/PycharmProjects/Tirocinio/Finetuning/loss_data_helpdesk.csv'  # Sostituisci con il percorso del tuo file CSV
+    file_path = '/Users/alessandro/PycharmProjects/Tirocinio/loss_data_helpdesk.csv'  # Sostituisci con il percorso del tuo file CSV
     LossPlotter.main(file_path)

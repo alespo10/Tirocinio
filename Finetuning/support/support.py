@@ -24,8 +24,8 @@ from Declare4Py.D4PyEventLog import D4PyEventLog
 from pm4py.objects.conversion.log import converter as log_converter
 from scipy.optimize import linear_sum_assignment
 from enum import Enum
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import LoraConfig, get_peft_model
 
 
@@ -45,8 +45,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
-MODEL_NAME = "gpt2-large"
-saving_model_name = "gpt2large_sequencer_ft_clean"
+MODEL_NAME = "facebook/opt-1.3b"
+saving_model_name = "opt_sequencer_ft_clean"
+#MODEL_NAME = "gpt2-large"
+#saving_model_name = "gpt2large_sequencer_ft_clean"
 #MODEL_NAME = "microsoft/phi-2"
 #saving_model_name = "mphi2_sequencer_ft_clean"
 #MODEL_NAME = "gpt2"
@@ -511,59 +513,66 @@ def save_model(model, tokenizer, type):
 #     model.train()
 #     return model
 
+
+##GPT2 e LARGE
+# def load_model(type):
+#     if type == "base":
+#         # pretrained model
+#         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#
+#         #pretrained with adapter model
+#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#         peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+#         model = get_peft_model(model, peft_config)
+#
+#         # untrained model
+#         #config = AutoConfig.from_pretrained(MODEL_NAME)
+#         #model = AutoModelForCausalLM.from_config(config)
+#
+#         # custom configured model
+#         #config = GPT2Config(n_layer=5, n_head=3)
+#         #model = AutoModelForCausalLM.from_config(config)
+#
+#     else:
+#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+#         model = AutoModelForCausalLM.from_pretrained(model_path)
+#
+#     model = model.to(device)
+#     model.config.use_cache = False
+#     model.train()
+#     return model
+#
+
+
+###FACEBOOK
 def load_model(type):
     if type == "base":
-        # pretrained model
-        #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-
-        #pretrained with adapter model
+        # Carica il modello pre-addestrato base
         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+
+        # Configura l'adattatore LoRA
+        peft_config = LoraConfig(
+            r=16,
+            lora_alpha=16,
+            lora_dropout=0.05,
+            bias="none",
+            task_type="CAUSAL_LM",
+            target_modules=["fc1", "fc2"]  # Target modules specifici di OPT
+        )
+        # Applica l'adattatore al modello
         model = get_peft_model(model, peft_config)
 
-        # untrained model
-        #config = AutoConfig.from_pretrained(MODEL_NAME)
-        #model = AutoModelForCausalLM.from_config(config)
-
-        # custom configured model
-        #config = GPT2Config(n_layer=5, n_head=3)
-        #model = AutoModelForCausalLM.from_config(config)
-
     else:
+        # Carica un modello fine-tuned salvato
         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
         model = AutoModelForCausalLM.from_pretrained(model_path)
 
+    # Sposta il modello sul dispositivo e configura i parametri
     model = model.to(device)
-    model.config.use_cache = False
-    model.train()
+    model.config.use_cache = False  # Disabilita la cache (utile per il training)
+    model.train()  # Imposta il modello in modalità di addestramento
     return model
 
-
-#
-# def load_tokenizer(observation_list):
-#     tokenizer_path = os.path.join(models_folder, f"tokenizer_{saving_model_name}_{dataset_name}.tk")
-#     if os.path.exists(tokenizer_path):
-#         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-#
-#     else:
-#         dataset = Dataset.from_list(observation_list)
-#
-#         def get_training_corpus():
-#             for start_idx in range(0, len(dataset)):
-#                 samples = dataset[start_idx]
-#                 yield samples["prompt"] + samples["chosen"]
-#
-#         old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-#         training_corpus = get_training_corpus()
-#         tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
-#
-#         # Aggiunta di token speciali specifici
-#         special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
-#         tokenizer.add_special_tokens(special_tokens_dict)
-#         tokenizer.save_pretrained(tokenizer_path)
-#
-#     tokenizer.pad_token = DELIM_EOS  # Imposta il token di padding
-#     return tokenizer
 
 
 def load_tokenizer(observation_list):
@@ -582,7 +591,9 @@ def load_tokenizer(observation_list):
 
         old_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         training_corpus = get_training_corpus()
+
         tokenizer = old_tokenizer.train_new_from_iterator(training_corpus, 500)
+
         special_tokens_dict = {"additional_special_tokens": [DELIM_SOC, DELIM_EOC, DELIM_SOS, DELIM_EOS, DELIM_SOP]}
         tokenizer.add_special_tokens(special_tokens_dict)
         tokenizer.save_pretrained(tokenizer_path)
