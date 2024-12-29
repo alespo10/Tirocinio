@@ -21,7 +21,7 @@ logging.getLogger().setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 
 
-dataset_name = "helpdesk"
+dataset_name = "bpic2017_o"
 test_size = 100
 n_to_generate = 100
 verbose = False
@@ -30,7 +30,7 @@ fast_approximated_cfls_calculation = False
 
 std_train = True
 std_evaluate = True
-std_epochs = 14
+std_epochs = 1
 std_batch_size = 16
 std_learning_rate = 3e-5
 std_warmup_steps = 5000
