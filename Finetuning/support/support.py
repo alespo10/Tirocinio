@@ -514,7 +514,7 @@ def save_model(model, tokenizer, type):
 #     return model
 
 
-#GPT2 e LARGE
+#GPT2 e LARGe
 def load_model(type):
     if type == "base":
         # pretrained model
