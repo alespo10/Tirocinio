@@ -63,7 +63,7 @@ log = {
         'target': 'activity'
     },
 
-    'bpic2017_o': {
+    'split_part1': {
         'event_attribute': [
             'case', 'activity', 'resource', 'timestamp', 'action'
         ],

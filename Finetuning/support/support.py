@@ -279,7 +279,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/BPIC15_1.csv"
+attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/split_part1.csv"
 
 
 

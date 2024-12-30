@@ -85,13 +85,13 @@ def load_and_convert_log_to_txt(input_csv_path, activities_to_remove=None):
 
 
 def create_output_file(dataset_name):
-    directory_path = "/Data"
+    directory_path = "C:/Users/nicol/PycharmProjects/Tirocinio/Data"
     file_path = os.path.join(directory_path, f"{dataset_name}.txt")
     print(f"File successfully created at: {file_path}")
     return file_path
 
 
 load_and_convert_log_to_txt(
-    input_csv_path="/Preprocessing/Input/mip.csv",
+    input_csv_path="C:/Users/nicol/PycharmProjects/Tirocinio/Preprocessing/Input/split_part1.csv",
     # activities_to_remove=["Activity A", "Activity B"]
 )
