@@ -45,10 +45,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
-# MODEL_NAME = "facebook/opt-1.3b"
-# saving_model_name = "opt_sequencer_ft_clean"
-MODEL_NAME = "gpt2-large"
-saving_model_name = "gpt2large_sequencer_ft_clean"
+MODEL_NAME = "facebook/opt-1.3b"
+saving_model_name = "opt_sequencer_ft_clean"
+#MODEL_NAME = "gpt2-large"
+#saving_model_name = "gpt2large_sequencer_ft_clean"
 #MODEL_NAME = "microsoft/phi-2"
 #saving_model_name = "mphi2_sequencer_ft_clean"
 #MODEL_NAME = "gpt2"
@@ -279,7 +279,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/bpic2017_o.csv"
+attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/BPIC15_1.csv"
 
 
 
@@ -515,63 +515,63 @@ def save_model(model, tokenizer, type):
 
 
 ##GPT2 e LARGE
-def load_model(type):
-    if type == "base":
-        # pretrained model
-        #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-
-        #pretrained with adapter model
-        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
-        model = get_peft_model(model, peft_config)
-
-        # untrained model
-        #config = AutoConfig.from_pretrained(MODEL_NAME)
-        #model = AutoModelForCausalLM.from_config(config)
-
-        # custom configured model
-        #config = GPT2Config(n_layer=5, n_head=3)
-        #model = AutoModelForCausalLM.from_config(config)
-
-    else:
-        model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_path)
-
-    model = model.to(device)
-    model.config.use_cache = False
-    model.train()
-    return model
+# def load_model(type):
+#     if type == "base":
+#         # pretrained model
+#         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#
+#         #pretrained with adapter model
+#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+#         peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+#         model = get_peft_model(model, peft_config)
+#
+#         # untrained model
+#         #config = AutoConfig.from_pretrained(MODEL_NAME)
+#         #model = AutoModelForCausalLM.from_config(config)
+#
+#         # custom configured model
+#         #config = GPT2Config(n_layer=5, n_head=3)
+#         #model = AutoModelForCausalLM.from_config(config)
+#
+#     else:
+#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+#         model = AutoModelForCausalLM.from_pretrained(model_path)
+#
+#     model = model.to(device)
+#     model.config.use_cache = False
+#     model.train()
+#     return model
 
 
 
 ###FACEBOOK
-# def load_model(type):
-#     if type == "base":
-#         # Carica il modello pre-addestrato base
-#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#
-#         # Configura l'adattatore LoRA
-#         peft_config = LoraConfig(
-#             r=16,
-#             lora_alpha=16,
-#             lora_dropout=0.05,
-#             bias="none",
-#             task_type="CAUSAL_LM",
-#             target_modules=["fc1", "fc2"]  # Target modules specifici di OPT
-#         )
-#         # Applica l'adattatore al modello
-#         model = get_peft_model(model, peft_config)
-#
-#     else:
-#         # Carica un modello fine-tuned salvato
-#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-#         model = AutoModelForCausalLM.from_pretrained(model_path)
-#
-#     # Sposta il modello sul dispositivo e configura i parametri
-#     model = model.to(device)
-#     model.config.use_cache = False  # Disabilita la cache (utile per il training)
-#     model.train()  # Imposta il modello in modalità di addestramento
-#     return model
+def load_model(type):
+    if type == "base":
+        # Carica il modello pre-addestrato base
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+
+        # Configura l'adattatore LoRA
+        peft_config = LoraConfig(
+            r=16,
+            lora_alpha=16,
+            lora_dropout=0.05,
+            bias="none",
+            task_type="CAUSAL_LM",
+            target_modules=["fc1", "fc2"]  # Target modules specifici di OPT
+        )
+        # Applica l'adattatore al modello
+        model = get_peft_model(model, peft_config)
+
+    else:
+        # Carica un modello fine-tuned salvato
+        model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+        model = AutoModelForCausalLM.from_pretrained(model_path)
+
+    # Sposta il modello sul dispositivo e configura i parametri
+    model = model.to(device)
+    model.config.use_cache = False  # Disabilita la cache (utile per il training)
+    model.train()  # Imposta il modello in modalità di addestramento
+    return model
 
 
 
