@@ -45,10 +45,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
-#MODEL_NAME = "facebook/opt-1.3b"
-#saving_model_name = "opt_sequencer_ft_clean"
-MODEL_NAME = "gpt2-large"
-saving_model_name = "gpt2large_sequencer_ft_clean"
+MODEL_NAME = "facebook/opt-1.3b"
+saving_model_name = "opt_sequencer_ft_clean"
+#MODEL_NAME = "gpt2-large"
+#saving_model_name = "gpt2large_sequencer_ft_clean"
 #MODEL_NAME = "microsoft/phi-2"
 #saving_model_name = "mphi2_sequencer_ft_clean"
 #MODEL_NAME = "gpt2"
