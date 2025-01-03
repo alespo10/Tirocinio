@@ -545,9 +545,12 @@ def save_model(model, tokenizer, type):
 
 
 # ###FACEBOOK
+from transformers import AutoModelForCausalLM
+from peft import LoraConfig, get_peft_model, PeftModel
+
 def load_model(type):
     if type == "base":
-        # Carica il modello pre-addestrato base
+        # Carica il modello base pre-addestrato
         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
         # Configura l'adattatore LoRA
@@ -559,22 +562,23 @@ def load_model(type):
             task_type="CAUSAL_LM",
             target_modules=["fc1", "fc2"]  # Target modules specifici di OPT
         )
-        # Applica l'adattatore al modello
+        # Applica l'adattatore LoRA al modello
         model = get_peft_model(model, peft_config)
 
     else:
-        # Carica un modello fine-tuned salvato
+        # Percorso del modello fine-tuned
         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_path)
-        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM",
-                                 target_modules=["c_attn"])
-        model = get_peft_model(model, peft_config)
+        # Carica il modello base
+        base_model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+        # Carica il modello fine-tuned con LoRA
+        model = PeftModel.from_pretrained(base_model, model_path)
 
     # Sposta il modello sul dispositivo e configura i parametri
     model = model.to(device)
     model.config.use_cache = False  # Disabilita la cache (utile per il training)
     model.train()  # Imposta il modello in modalità di addestramento
     return model
+
 
 
 
