@@ -30,7 +30,7 @@ fast_approximated_cfls_calculation = False
 
 std_train = True
 std_evaluate = True
-std_epochs = 7
+std_epochs = 10
 std_batch_size = 16
 std_learning_rate = 3e-5
 std_warmup_steps = 5000
