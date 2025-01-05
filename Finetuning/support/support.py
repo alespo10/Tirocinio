@@ -45,12 +45,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 
-#MODEL_NAME = "facebook/opt-1.3b"
-#saving_model_name = "opt_sequencer_ft_clean"
+MODEL_NAME = "facebook/opt-1.3b"
+saving_model_name = "opt_sequencer_ft_clean"
 #MODEL_NAME = "gpt2-large"
 #saving_model_name = "gpt2large_sequencer_ft_clean"
-MODEL_NAME = "microsoft/phi-2"
-saving_model_name = "mphi2_sequencer_ft_clean"
+#MODEL_NAME = "microsoft/phi-2"
+#saving_model_name = "mphi2_sequencer_ft_clean"
 #MODEL_NAME = "gpt2"
 #saving_model_name = "gpt2_sequencer_ft_clean"
 
@@ -279,7 +279,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/helpdesk.csv"
+attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/split_part1.csv"
 
 
 
