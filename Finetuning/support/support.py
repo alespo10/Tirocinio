@@ -49,8 +49,6 @@ MODEL_NAME = "facebook/opt-1.3b"
 saving_model_name = "opt_sequencer_ft_clean"
 #MODEL_NAME = "gpt2-large"
 #saving_model_name = "gpt2large_sequencer_ft_clean"
-#MODEL_NAME = "microsoft/phi-2"
-#saving_model_name = "mphi2_sequencer_ft_clean"
 #MODEL_NAME = "gpt2"
 #saving_model_name = "gpt2_sequencer_ft_clean"
 
@@ -488,31 +486,6 @@ def save_model(model, tokenizer, type):
 
 
 
-# Microsoft/phi-2
-# def load_model(type):
-#     if type == "base":
-#         # Pre-trained base model
-#         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#         print(model)
-#
-#         # PEFT configuration (LoRA)
-#         peft_config = LoraConfig(
-#             r=16, lora_alpha=16, lora_dropout=0.05,
-#             bias="none", task_type="CAUSAL_LM",
-#             target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
-#         )
-#         model = get_peft_model(model, peft_config)
-#
-#     else:
-#         # Fine-tuned model path
-#         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-#         model = AutoModelForCausalLM.from_pretrained(model_path)
-#
-#     model = model.to(device)
-#     model.config.use_cache = False
-#     model.train()
-#     return model
-#
 
 #GPT2 e LARGe
 # def load_model(type):
