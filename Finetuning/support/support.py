@@ -567,7 +567,7 @@ def load_model(type):
             lora_dropout=0.05,
             bias="none",
             task_type="CAUSAL_LM",
-            target_modules=["attn"]
+            target_modules=["query_key_value"]
         )
         model = get_peft_model(model, peft_config)
     else:
