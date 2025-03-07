@@ -112,7 +112,9 @@ rl_test_set = PMDataset(sequences=test_observation_list, decl_path=decl_path)
 ################### Loading model ###################
 
 cprint(f"Loading model '{support.MODEL_NAME}'...", Color.BLUE)
-model = support.load_model("base")
+#model = support.load_model("base")
+model = support.load_model("fine_tuned")
+
 model.train()
 optimizer = AdamW(model.parameters(), lr=std_learning_rate)
 scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=std_warmup_steps, num_training_steps=-1)
