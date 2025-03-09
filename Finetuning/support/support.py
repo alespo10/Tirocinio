@@ -49,10 +49,10 @@ torch.backends.cudnn.benchmark = True
 #saving_model_name = "opt_sequencer_ft_clean"
 #MODEL_NAME = "gpt2-large"
 #saving_model_name = "gpt2large_sequencer_ft_clean"
-MODEL_NAME = "microsoft/phi-2"
-saving_model_name = "mphi2_sequencer_ft_clean"
-#MODEL_NAME = "gpt2"
-#saving_model_name = "gpt2_sequencer_ft_clean"
+#MODEL_NAME = "microsoft/phi-2"
+#saving_model_name = "mphi2_sequencer_ft_clean"
+MODEL_NAME = "gpt2"
+saving_model_name = "gpt2_sequencer_ft_clean"
 
 MIN_SEQ_LEN = 100
 MAX_SEQ_LEN = 400
@@ -489,51 +489,22 @@ def save_model(model, tokenizer, type):
 
 
 # Microsoft/phi-2
-def load_model(type):
-    if type == "base":
-        # Pre-trained base model
-        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-        print(model)
-
-        # PEFT configuration (LoRA)
-        peft_config = LoraConfig(
-            r=16, lora_alpha=16, lora_dropout=0.05,
-            bias="none", task_type="CAUSAL_LM",
-            target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
-        )
-        model = get_peft_model(model, peft_config)
-
-    else:
-        # Fine-tuned model path
-        model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_path)
-
-    model = model.to(device)
-    model.config.use_cache = False
-    model.train()
-    return model
-
-
-#GPT2 e LARGe
 # def load_model(type):
 #     if type == "base":
-#         # pretrained model
-#         #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#
-#         #pretrained with adapter model
+#         # Pre-trained base model
 #         model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-#         peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+#         print(model)
+#
+#         # PEFT configuration (LoRA)
+#         peft_config = LoraConfig(
+#             r=16, lora_alpha=16, lora_dropout=0.05,
+#             bias="none", task_type="CAUSAL_LM",
+#             target_modules=["q_proj", "v_proj", "k_proj", "dense"]  # Moduli di PHI-2
+#         )
 #         model = get_peft_model(model, peft_config)
 #
-#         # untrained model
-#         #config = AutoConfig.from_pretrained(MODEL_NAME)
-#         #model = AutoModelForCausalLM.from_config(config)
-#
-#         # custom configured model
-#         #config = GPT2Config(n_layer=5, n_head=3)
-#         #model = AutoModelForCausalLM.from_config(config)
-#
 #     else:
+#         # Fine-tuned model path
 #         model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
 #         model = AutoModelForCausalLM.from_pretrained(model_path)
 #
@@ -541,6 +512,35 @@ def load_model(type):
 #     model.config.use_cache = False
 #     model.train()
 #     return model
+
+
+#GPT2 e LARGe
+def load_model(type):
+    if type == "base":
+        # pretrained model
+        #model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+
+        #pretrained with adapter model
+        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+        peft_config = LoraConfig(r=16, lora_alpha=16, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM", target_modules=["c_attn"])
+        model = get_peft_model(model, peft_config)
+
+        # untrained model
+        #config = AutoConfig.from_pretrained(MODEL_NAME)
+        #model = AutoModelForCausalLM.from_config(config)
+
+        # custom configured model
+        #config = GPT2Config(n_layer=5, n_head=3)
+        #model = AutoModelForCausalLM.from_config(config)
+
+    else:
+        model_path = os.path.join(models_folder, f"{saving_model_name}_{type}_{dataset_name}")
+        model = AutoModelForCausalLM.from_pretrained(model_path)
+
+    model = model.to(device)
+    model.config.use_cache = False
+    model.train()
+    return model
 
 
 
