@@ -30,7 +30,7 @@ fast_approximated_cfls_calculation = False
 
 std_train = True
 std_evaluate = True
-std_epochs = 14
+std_epochs = 1
 std_batch_size = 16
 std_learning_rate = 3e-5
 std_warmup_steps = 5000
@@ -66,6 +66,10 @@ elif dataset_name == "synthesized_d53":
 else:
     activities_to_keep = ["Activity_A", "Activity_B", "Activity_C", "Activity_D", "Activity_E", "Activity_F", "Activity_G", "Activity_H", "Activity_I", "Activity_J", "Activity_K", "Activity_L", "Activity_M", "Activity_N", "Activity_O", "Activity_P", "Activity_Q", "Activity_R", "Activity_S", "Activity_T", "Activity_U", "Activity_V", "Activity_W", "Activity_X", "Activity_Y", "Activity_Z", "Activity_AA", "Activity_AB", "Activity_AC", "Activity_AD", "Activity_AE", "Activity_AF", "Activity_AG", "Activity_AH", "Activity_AI", "Activity_AJ"]
     activities_to_remove = []
+
+
+
+
 
 completed_sequences_std_woc_output_file_path = f"{base_directory}/outputs/completed_std_woc_{dataset_name}_ep_{std_epochs}.csv" #
 completed_sequences_std_wc_output_file_path = f"{base_directory}/outputs/completed_std_wc_{dataset_name}_ep_{std_epochs}.csv"
