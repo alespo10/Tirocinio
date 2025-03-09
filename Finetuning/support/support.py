@@ -526,7 +526,8 @@ def load_model(type):
         model = get_peft_model(model, peft_config)
 
         # untrained model
-        #config = AutoConfig.from_pretrained(MODEL_NAME)
+        #config = AutoConfig.from_
+        # pretrained(MODEL_NAME)
         #model = AutoModelForCausalLM.from_config(config)
 
         # custom configured model
