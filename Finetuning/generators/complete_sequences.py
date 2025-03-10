@@ -76,7 +76,7 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 output_list = list(cur_ids.squeeze().to("cpu").numpy())
                 output_text = tokenizer.decode(output_list)
-
+                print(output_text)
                 if check_response_constraint(output_text, activity_a, activity_b):
                     counter_response_satisfied += 1
 

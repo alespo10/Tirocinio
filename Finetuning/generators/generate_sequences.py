@@ -70,6 +70,7 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             sequence_num = sequence_num + 1
             output_list = list(cur_ids.squeeze().to("cpu").numpy())
             output_text = tokenizer.decode(output_list)
+            print(output_text)
 
             if check_response_constraint(output_text, activity_a, activity_b):
                 counter_response_satisfied += 1
