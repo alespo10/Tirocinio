@@ -6,13 +6,18 @@ from Finetuning.support.support import choose_from_top, DELIM_EOS, DELIM_SOP, DE
 
 
 def check_response_constraint(sequence, activity_a, activity_b):
-    activities = sequence.split(" ")
-    try:
-        index_a = activities.index(activity_a)
-        index_b = activities.index(activity_b, index_a + 1)
-        return index_b > index_a
-    except ValueError:
-        return False
+    # Trova la posizione della prima occorrenza dell'attività A
+    index_a = sequence.find(activity_a)
+    if index_a == -1:
+        return False  # Attività A non trovata
+
+    # Trova la posizione della prima occorrenza dell'attività B dopo A
+    index_b = sequence.find(activity_b, index_a + len(activity_a))
+    if index_b == -1:
+        return False  # Attività B non trovata
+
+    # Se l'indice di B è maggiore di A, il vincolo è rispettato
+    return index_b > index_a
 
 
 def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_file_path, path_table=None, constraints=None, n_min_constraints=0, n_max_constraints=3, verbose=True, avoid_cfls_calculation=False, seed=None):
@@ -70,7 +75,6 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             sequence_num = sequence_num + 1
             output_list = list(cur_ids.squeeze().to("cpu").numpy())
             output_text = tokenizer.decode(output_list)
-            print(f"Generated sequence: {output_text}")  # <-- Aggiungi questa riga qui!
 
             if check_response_constraint(output_text, activity_a, activity_b):
                 counter_response_satisfied += 1
@@ -102,7 +106,7 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
 
                     f.write(sentence)
 
-        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
+        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}", Color.YELLOW)
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
