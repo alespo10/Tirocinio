@@ -47,12 +47,12 @@ torch.backends.cudnn.benchmark = True
 
 #MODEL_NAME = "facebook/opt-1.3b"
 #saving_model_name = "opt_sequencer_ft_clean"
-#MODEL_NAME = "gpt2-large"
-#saving_model_name = "gpt2large_sequencer_ft_clean"
+MODEL_NAME = "gpt2-large"
+saving_model_name = "gpt2large_sequencer_ft_clean"
 #MODEL_NAME = "microsoft/phi-2"
 #saving_model_name = "mphi2_sequencer_ft_clean"
-MODEL_NAME = "gpt2"
-saving_model_name = "gpt2_sequencer_ft_clean"
+#MODEL_NAME = "gpt2"
+#saving_model_name = "gpt2_sequencer_ft_clean"
 
 MIN_SEQ_LEN = 100
 MAX_SEQ_LEN = 400
@@ -279,7 +279,7 @@ def extract_unique_activities(file_path):
     # Converti il set in una lista ordinata
     return sorted(unique_activities)
 
-attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/split_part1.csv"
+attDaCsv = "/kaggle/working/Tirocinio/Preprocessing/Input/helpdesk.csv"
 
 
 
