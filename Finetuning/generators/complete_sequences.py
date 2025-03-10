@@ -98,7 +98,7 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                     if verbose:
                         cprint("Sequence generated: " + output_text, Color.RED)
 
-            cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}", Color.YELLOW)
+            cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
