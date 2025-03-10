@@ -76,6 +76,8 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             output_list = list(cur_ids.squeeze().to("cpu").numpy())
             output_text = tokenizer.decode(output_list)
 
+            print(f"Generate sequence: {output_text}")  # Aggiunto per vedere le sequenze completate
+
             if check_response_constraint(output_text, activity_a, activity_b):
                 counter_response_satisfied += 1
 
