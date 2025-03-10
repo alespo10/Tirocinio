@@ -2,26 +2,13 @@ import os
 import torch
 import csv
 
+from Finetuning.DeclareConstraint.SequenceValidor import SequenceValidator
 from Finetuning.support import support
 from Finetuning.support.support import (
     find_middle_index, MAX_SEQ_LEN, choose_from_top, DELIM_EOS,
     get_string_between, DELIM_SOC, DELIM_EOC, DELIM_SOS, Color, cprint
 )
 
-
-def check_response_constraint(sequence, activity_a, activity_b):
-    # Trova la posizione della prima occorrenza dell'attività A
-    index_a = sequence.find(activity_a)
-    if index_a == -1:
-        return False  # Attività A non trovata
-
-    # Trova la posizione della prima occorrenza dell'attività B dopo A
-    index_b = sequence.find(activity_b, index_a + len(activity_a))
-    if index_b == -1:
-        return False  # Attività B non trovata
-
-    # Se l'indice di B è maggiore di A, il vincolo è rispettato
-    return index_b > index_a
 
 
 def complete_sequences(model, tokenizer, validation_list, test_dataset, output_file_path, path_table=None, supply_constraints=True, verbose=True, avoid_cfls_calculation=False):
@@ -84,7 +71,8 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 print(f"Completed sequence: {output_text}")  # Aggiunto per vedere le sequenze completate
 
-                if check_response_constraint(output_text, activity_a, activity_b):
+                validator = SequenceValidator(activity_a, activity_b)
+                if validator.check_response_constraint(output_text):
                     counter_response_satisfied += 1
 
             cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
