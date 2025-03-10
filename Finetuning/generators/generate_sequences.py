@@ -5,10 +5,24 @@ from Finetuning.support import support
 from Finetuning.support.support import choose_from_top, DELIM_EOS, DELIM_SOP, DELIM_SOC, DELIM_EOC, DELIM_SOS, cprint, Color
 
 
+def check_response_constraint(sequence, activity_a, activity_b):
+    activities = sequence.split(" ")
+    try:
+        index_a = activities.index(activity_a)
+        index_b = activities.index(activity_b, index_a + 1)
+        return index_b > index_a
+    except ValueError:
+        return False
+
+
 def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_file_path, path_table=None, constraints=None, n_min_constraints=0, n_max_constraints=3, verbose=True, avoid_cfls_calculation=False, seed=None):
     model.eval()
     if os.path.exists(output_file_path):
         os.remove(output_file_path)
+
+    activity_a = "Assign seriousness"
+    activity_b = "Take in charge ticket"
+    counter_response_satisfied = 0
 
     np_validation_list = support.sequences2numpy(validation_list)
     np_generated_list = []
@@ -47,9 +61,7 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
                 else:
                     n = 3
 
-                # Randomly (from the top_n probability distribution) select the next word
                 next_token_id = choose_from_top(softmax_logits.to("cpu").numpy(), n=n)
-                # Adding the last word to the running sequence
                 cur_ids = torch.cat([cur_ids, torch.ones((1, 1)).long().to(support.device) * next_token_id], dim=1)
                 if next_token_id in tokenizer.encode(DELIM_EOS):
                     break
@@ -58,6 +70,10 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             sequence_num = sequence_num + 1
             output_list = list(cur_ids.squeeze().to("cpu").numpy())
             output_text = tokenizer.decode(output_list)
+
+            if check_response_constraint(output_text, activity_a, activity_b):
+                counter_response_satisfied += 1
+
             np_generated_list.append(support.sequence2numpy(output_text))
             if constraints is not None:
                 result_detailed, counter_current_detailed = support.check_constraints(output_text, selected_constraints, completed=True, detailed=True)
@@ -85,19 +101,10 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
 
                     f.write(sentence)
 
-        if constraints is not None:
-            if path_table is not None:
-                support.save_csv_result(result_table, path_table)
-
-            if counter_detailed_satisfied_total == 0:
-                cprint(f"Constraints satisfied (on the completed sequences): {counter_detailed_satisfied}/{counter_detailed_satisfied_total} - 0%", Color.MAGENTA)
-
-            else:
-                cprint(f"Constraints satisfied (on the completed sequences): {counter_detailed_satisfied}/{counter_detailed_satisfied_total} - {int((counter_detailed_satisfied/counter_detailed_satisfied_total)*100)}%", Color.MAGENTA)
-
-            cprint(f"Sequences generated with all selected constraints satisfied: {counter_satisfied}/{n_to_generate} - {int((counter_satisfied/n_to_generate)*100)}%", Color.MAGENTA)
+        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}", Color.YELLOW)
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
             cprint(f"CFLD metric between the original test set and generated set of sequences (lower is better): {cfld_metric:9.4f}", Color.MAGENTA)
             cprint(f"CFLS metric between the original test set and generated set of sequences (higher is better): {1 - cfld_metric:9.4f}", Color.MAGENTA)
+

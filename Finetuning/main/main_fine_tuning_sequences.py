@@ -21,7 +21,7 @@ logging.getLogger().setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 
 
-dataset_name = "split_part1"
+dataset_name = "helpdesk"
 test_size = 100
 n_to_generate = 100
 verbose = False

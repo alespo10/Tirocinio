@@ -5,14 +5,22 @@ from Finetuning.support import support
 from Finetuning.support.support import find_middle_index, MAX_SEQ_LEN, choose_from_top, DELIM_EOS, get_string_between, DELIM_SOC, DELIM_EOC, DELIM_SOS, Color, cprint
 
 
+def check_response_constraint(sequence, activity_a, activity_b):
+    activities = sequence.split(" ")
+    try:
+        index_a = activities.index(activity_a)
+        index_b = activities.index(activity_b, index_a + 1)
+        return index_b > index_a
+    except ValueError:
+        return False
+
+
 def complete_sequences(model, tokenizer, validation_list, test_dataset, output_file_path, path_table=None, supply_constraints=True, verbose=True, avoid_cfls_calculation=False):
-    counter_satisfied_all = 0
-    counter_satisfied_input = 0
-    counter_detailed_satisfied = 0
-    counter_detailed_satisfied_total = 0
+    counter_response_satisfied = 0
+    activity_a = "Assign seriousness"
+    activity_b = "Take in charge ticket"
     np_validation_list = support.sequences2numpy(validation_list)
     np_generated_list = []
-    result_table = []
 
     with torch.no_grad():
         with open(output_file_path, "w") as csv_file:
@@ -22,13 +30,11 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                 if isinstance(value, dict):
                     input = value["prompt"]
                     output = value["chosen"]
-                    raw_constraints = value["constraints"]
 
                 else:
                     middle_index = find_middle_index(value[0])
                     input = value[0][:middle_index]
                     output = value[0][middle_index + 1:]
-                    raw_constraints = None
 
                 if not supply_constraints:
                     input = support.remove_substring_between(input, DELIM_SOC, DELIM_EOC)
@@ -70,7 +76,10 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 output_list = list(cur_ids.squeeze().to("cpu").numpy())
                 output_text = tokenizer.decode(output_list)
-                #Filtrare output_text per farlo diventare una lista di attivita che si susseguono.
+
+                if check_response_constraint(output_text, activity_a, activity_b):
+                    counter_response_satisfied += 1
+
                 np_generated_list.append(support.sequence2numpy(output_text))
                 constraints = get_string_between(DELIM_SOC, DELIM_EOC, output_text)
                 events = get_string_between(DELIM_SOS, DELIM_EOS, output_text)
@@ -89,42 +98,10 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                     if verbose:
                         cprint("Sequence generated: " + output_text, Color.RED)
 
-                if raw_constraints is not None:
-                    if path_table is not None:
-                        result_table.append(support.build_result_line(input, output_text, raw_constraints))
-
-                    result_on_current_detailed, counter_current_detailed = support.check_constraints(input + output_text, raw_constraints, completed=True, detailed=True)
-                    result_on_input_detailed, _ = support.check_constraints(input, raw_constraints, completed=False, detailed=True)
-                    result_on_current = support.check_constraints(input + output_text, raw_constraints, completed=True, detailed=False)
-                    result_on_input = support.check_constraints(input, raw_constraints, completed=False, detailed=False)
-                    counter_satisfied_all += 1 if result_on_current else 0
-                    counter_satisfied_input += 1 if result_on_input else 0
-                    counter_detailed_satisfied += counter_current_detailed
-                    counter_detailed_satisfied_total += len(raw_constraints)
-                    if verbose:
-                        cprint(f"All constraints satisfied (on the completed sequence): {result_on_current}", Color.CYAN)
-                        cprint(f"All constraints satisfied (on the input sequence): {result_on_input}", Color.CYAN)
-                        cprint(f"Status constraints (on the completed sequence): {result_on_current_detailed}", Color.CYAN)
-                        cprint(f"Status constraints (on the input sequence): {result_on_input_detailed}", Color.CYAN)
-
-        if raw_constraints is not None:
-            if not supply_constraints:
-                cprint("Constraints not supplied in the input!", Color.MAGENTA)
-
-            else:
-                if path_table is not None:
-                    support.save_csv_result(result_table, path_table)
-
-            if counter_detailed_satisfied_total == 0:
-                cprint(f"Constraints satisfied (on the completed sequences): {counter_detailed_satisfied}/{counter_detailed_satisfied_total} - 0%", Color.MAGENTA)
-
-            else:
-                cprint(f"Constraints satisfied (on the completed sequences): {counter_detailed_satisfied}/{counter_detailed_satisfied_total} - {int((counter_detailed_satisfied/counter_detailed_satisfied_total)*100)}%", Color.MAGENTA)
-
-            cprint(f"Sequences completed with all constraints satisfied (on the completed sequences): {counter_satisfied_all}/{len(test_dataset)} - {int((counter_satisfied_all/len(test_dataset))*100)}%", Color.MAGENTA)
-            cprint(f"Sequences completed with all constraints satisfied (on the input sequences): {counter_satisfied_input}/{len(test_dataset)} - {int((counter_satisfied_input/len(test_dataset))*100)}%", Color.MAGENTA)
+            cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}", Color.YELLOW)
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
             cprint(f"CFLD metric between the original test set and generated set of sequences (lower is better): {cfld_metric:9.4f}", Color.MAGENTA)
             cprint(f"CFLS metric between the original test set and generated set of sequences (higher is better): {1 - cfld_metric:9.4f}", Color.MAGENTA)
+

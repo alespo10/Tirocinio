@@ -54,5 +54,5 @@ class LossPlotter:
 
 # Per eseguire il programma:
 if __name__ == "__main__":
-    file_path = "Users\nicol\PycharmProjects\Tirocinio\loss_data_helpdesk.csv"
+    file_path = "/Users/alessandro/Downloads/kaggle 2/working/Tirocinio/outputs/loss_data_split_part1.csv"
     LossPlotter.main(file_path)

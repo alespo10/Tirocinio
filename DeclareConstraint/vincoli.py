@@ -2,7 +2,7 @@ import pandas as pd
 from collections import defaultdict
 from Preprocessing.Utility.log_help import log
 
-
+#Da qui capisco pattern comuni da testare.
 def extract_common_patterns(file_path: str, dataset: str, min_support: float = 0.05):
     # Ottiene le colonne rilevanti per il dataset specifico
     event_columns = log[dataset]['event_attribute']
