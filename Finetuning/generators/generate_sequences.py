@@ -106,7 +106,7 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
 
                     f.write(sentence)
 
-        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}", Color.YELLOW)
+        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
