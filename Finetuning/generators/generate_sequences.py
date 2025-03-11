@@ -68,6 +68,7 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             if validator.check_response_constraint(output_text):
                 counter_response_satisfied += 1
 
+
             np_generated_list.append(support.sequence2numpy(output_text))
             if constraints is not None:
                 result_detailed, counter_current_detailed = support.check_constraints(output_text, selected_constraints, completed=True, detailed=True)

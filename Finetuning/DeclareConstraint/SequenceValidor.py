@@ -12,6 +12,25 @@ class SequenceValidator:
             return False
         return index_b > index_a
 
+    def check_alternate_precedence(self, sequence):
+        last_seen_a = -1
+        for i, event in enumerate(sequence):
+            if event == self.activity_a:
+                last_seen_a = i
+            elif event == self.activity_b:
+                if last_seen_a == -1 or any(e == self.activity_b for e in sequence[last_seen_a + 1: i]):
+                    return False
+        return True
 
+    def check_chain_precedence(self, sequence):
+        for i in range(1, len(sequence)):
+            if sequence[i] == self.activity_b and sequence[i - 1] != self.activity_a:
+                return False
+        return True
+
+    def check_not_coexistence(self, sequence):
+        contains_a = self.activity_a in sequence
+        contains_b = self.activity_b in sequence
+        return not (contains_a and contains_b)
 
 
