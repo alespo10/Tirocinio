@@ -4,18 +4,16 @@ from Finetuning.dataset.pm_dataset import PMDataset
 from Finetuning.generators.complete_sequences import complete_sequences
 from peft import PeftModel
 
-# Percorso della cartella dove è salvato il tuo adapter LoRA
-adapter_model_path = "/kaggle/working/Tirocinio/trained_models"
 
-# Carica il modello base
+model_path = "/kaggle/working/Tirocinio/trained_models"
+
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+
 base_model_name = "facebook/opt-1.3b"
-tokenizer = AutoTokenizer.from_pretrained(base_model_name)
 model = AutoModelForCausalLM.from_pretrained(base_model_name)
 
-# Carica l'adapter LoRA e applicalo al modello base
-model = PeftModel.from_pretrained(model, adapter_model_path)
+model = PeftModel.from_pretrained(model, model_path, is_trainable=False)
 
-# Metti il modello in modalità di valutazione
 model.eval()
 
 print("✅ Modello LoRA caricato correttamente!")
