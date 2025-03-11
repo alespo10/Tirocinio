@@ -4,12 +4,12 @@ from Finetuning.dataset.pm_dataset import PMDataset
 from Finetuning.generators.complete_sequences import complete_sequences
 
 # Caricare modello fine-tuned
-model_path = "/Users/alessandro/PycharmProjects/Tirocinio/trained_models"
+model_path = "/kaggle/working/Tirocinio/trained_models"
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForCausalLM.from_pretrained(model_path)
 model.eval()
 
-test_file_path = "/Users/alessandro/PycharmProjects/Tirocinio/Data/split_part1.txt"
+test_file_path = "/kaggle/working/Tirocinio/Data/split_part1.txt"
 with open(test_file_path, "r", encoding="utf-8") as f:
     test_lines = f.readlines()[:100]
 
