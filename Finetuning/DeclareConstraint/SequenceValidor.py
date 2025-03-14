@@ -3,6 +3,14 @@ class SequenceValidator:
         self.activity_a = activity_a
         self.activity_b = activity_b
 
+    #Existence templates
+    def check_existence(self, sequence):
+        return sequence.find(self.activity_a) != -1
+
+    def init(self, sequence):
+        return sequence.find(self.activity_b) == 0
+
+    #Relation templates
     def check_response_constraint(self, sequence):
         index_a = sequence.find(self.activity_a)
         index_b = sequence.find(self.activity_b)

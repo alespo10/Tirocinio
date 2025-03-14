@@ -35,8 +35,8 @@ def extract_common_patterns(file_path: str, dataset: str, min_support: float = 0
     return pattern_report
 
 
-file_path = '/Users/alessandro/PycharmProjects/Tirocinio/Preprocessing/Input/helpdesk.csv'  # Sostituisci con il percorso reale del file CSV
-patterns = extract_common_patterns(file_path, 'helpdesk', min_support=0.05)
+file_path = '/Users/alessandro/PycharmProjects/Tirocinio/Preprocessing/Input/split_part1.csv'  # Sostituisci con il percorso reale del file CSV
+patterns = extract_common_patterns(file_path, 'split_part1', min_support=0.05)
 
 for pattern in patterns:
     print(pattern)
