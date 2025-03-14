@@ -20,7 +20,7 @@ base_model = AutoModelForCausalLM.from_pretrained(base_model_name).to(device)
 model = PeftModel.from_pretrained(base_model, fine_tuned_model_path).to(device)
 
 # Carica il tokenizer
-tokenizer = AutoTokenizer.from_pretrained(tok_path)
+tokenizer = AutoTokenizer.from_pretrained(base_model_name)
 
 # Salva il modello e il tokenizer
 model.save_pretrained(save_path)
