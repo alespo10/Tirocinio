@@ -18,8 +18,14 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
     counter_detailed_satisfied_total = 0
     counter_response_satisfied = 0
 
-    activity_a = "Assign seriousness"
-    activity_b = "Take in charge ticket"
+    OSMO = "O_Sent (mail and online)"
+    OR = "O_Returned"
+    OCO = "O_Create Offer"
+
+    counter_response_satisfied = 0
+    counter_chain_precedence = 0
+    counter_init = 0
+    counter_not_coexistence = 0
 
     np_validation_list = support.sequences2numpy(validation_list)
     np_generated_list = []
@@ -71,13 +77,26 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 print(f"Completed sequence: {output_text}")  # Aggiunto per vedere le sequenze completate
 
-                validator = SequenceValidator(activity_a, activity_b)
+                validator = SequenceValidator(OSMO, OR)
                 if validator.check_response_constraint(output_text):
                     counter_response_satisfied += 1
 
+                validator = SequenceValidator(OSMO, OR)
+                if validator.check_chain_precedence(output_text):
+                    counter_chain_precedence += 1
 
+                validator = SequenceValidator(OCO)
+                if validator.init(output_text):
+                    counter_init += 1
 
-            cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
+                validator = SequenceValidator(OR, OCO)
+                if validator.check_not_coexistence(output_text):
+                    counter_not_coexistence += 1
+
+        cprint(f"Sequences satisfying Response({OSMO}, {OR}): {counter_response_satisfied}")
+        cprint(f"Sequences satisfying Chain Precedence({OSMO}, {OR}): {counter_chain_precedence}")
+        cprint(f"Sequences satisfying Init({OCO}): {counter_init}")
+        cprint(f"Sequences satisfying Not CoExistence({OR}, {OCO}): {counter_not_coexistence}")
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)

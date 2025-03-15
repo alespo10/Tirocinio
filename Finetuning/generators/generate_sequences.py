@@ -112,7 +112,10 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
 
                     f.write(sentence)
 
-        cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
+        cprint(f"Sequences satisfying Response({OSMO}, {OR}): {counter_response_satisfied}")
+        cprint(f"Sequences satisfying Chain Precedence({OSMO}, {OR}): {counter_chain_precedence}")
+        cprint(f"Sequences satisfying Init({OCO}): {counter_init}")
+        cprint(f"Sequences satisfying Not CoExistence({OR}, {OCO}): {counter_not_coexistence}")
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
