@@ -56,19 +56,20 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                 if cur_ids.size()[1] > MAX_SEQ_LEN:
                     continue
 
-                for i in range(100):
+                for i in range(200):  # Aumenta il numero massimo di iterazioni
                     outputs = model(cur_ids, labels=cur_ids)
                     loss, logits = outputs[:2]
                     softmax_logits = torch.softmax(logits[0, -1], dim=0)
-                    if i < 3:
+
+                    if i < 10:  # Estendi la fase esplorativa ai primi 10 token
                         n = 20
                     else:
-                        n = 3
+                        n = 5  # Permetti più libertà nella generazione
 
                     next_token_id = choose_from_top(softmax_logits.to("cpu").numpy(), n=n)
                     cur_ids = torch.cat([cur_ids, torch.ones((1, 1)).long().to(support.device) * next_token_id], dim=1)
 
-                    if next_token_id in tokenizer.encode(DELIM_EOS):
+                    if next_token_id in tokenizer.encode(DELIM_EOS) and len(cur_ids[0]) > 150:
                         sequence_finished = True
                         break
 
