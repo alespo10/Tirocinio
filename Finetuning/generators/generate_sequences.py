@@ -6,7 +6,7 @@ from Finetuning.support import support
 from Finetuning.support.support import choose_from_top, DELIM_EOS, DELIM_SOP, DELIM_SOC, DELIM_EOC, DELIM_SOS, cprint, Color
 
 
-def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_file_path, path_table=None, constraints=None, n_min_constraints=0, n_max_constraints=3, verbose=True, avoid_cfls_calculation=False, seed=None):
+def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_file_path, path_table=None, constraints=None, n_min_constraints=0, n_max_constraints=3, verbose=True, avoid_cfls_calculation=True, seed=None):
     model.eval()
     if os.path.exists(output_file_path):
         os.remove(output_file_path)

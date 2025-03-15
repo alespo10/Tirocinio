@@ -11,7 +11,7 @@ from Finetuning.support.support import (
 
 
 
-def complete_sequences(model, tokenizer, validation_list, test_dataset, output_file_path, path_table=None, supply_constraints=True, verbose=True, avoid_cfls_calculation=False):
+def complete_sequences(model, tokenizer, validation_list, test_dataset, output_file_path, path_table=None, supply_constraints=True, verbose=True, avoid_cfls_calculation=True):
     counter_satisfied_all = 0
     counter_satisfied_input = 0
     counter_detailed_satisfied = 0
@@ -74,6 +74,8 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 output_list = list(cur_ids.squeeze().to("cpu").numpy())
                 output_text = tokenizer.decode(output_list)
+
+                print(f"Completed sequence: {output_text}")
 
                 validator = SequenceValidator(OSMO, OR)
                 if validator.check_response_constraint(output_text):
