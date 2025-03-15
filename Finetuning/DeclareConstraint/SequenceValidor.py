@@ -8,7 +8,7 @@ class SequenceValidator:
         return sequence.find(self.activity_a) != -1
 
     def init(self, sequence):
-        return sequence.find(self.activity_b) == 0
+        return sequence.find(self.activity_a) == 0
 
     #Relation templates
     def check_response_constraint(self, sequence):
