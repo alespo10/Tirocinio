@@ -11,9 +11,14 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
     if os.path.exists(output_file_path):
         os.remove(output_file_path)
 
-    activity_a = "Assign seriousness"
-    activity_b = "Take in charge ticket"
+    OSMO = "O_Sent (mail and online)"
+    OR = "O_Returned"
+    OCO = "O_Create Offer"
+
     counter_response_satisfied = 0
+    counter_chain_precedence = 0
+    counter_init = 0
+    counter_not_coexistence = 0
 
     np_validation_list = support.sequences2numpy(validation_list)
     np_generated_list = []
@@ -62,11 +67,22 @@ def generate_sequences(model, tokenizer, validation_list, n_to_generate, output_
             output_list = list(cur_ids.squeeze().to("cpu").numpy())
             output_text = tokenizer.decode(output_list)
 
-            print(f"Generate sequence: {output_text}")  # Aggiunto per vedere le sequenze completate
-
-            validator = SequenceValidator(activity_a, activity_b)
+            validator = SequenceValidator(OSMO, OR)
             if validator.check_response_constraint(output_text):
                 counter_response_satisfied += 1
+
+            validator = SequenceValidator(OSMO, OR)
+            if validator.check_chain_precedence(output_text):
+                counter_chain_precedence += 1
+
+            validator = SequenceValidator(OCO)
+            if validator.init(output_text):
+                counter_init += 1
+
+            validator = SequenceValidator(OR,OCO)
+            if validator.check_not_coexistence(output_text):
+                counter_not_coexistence += 1
+
 
 
             np_generated_list.append(support.sequence2numpy(output_text))

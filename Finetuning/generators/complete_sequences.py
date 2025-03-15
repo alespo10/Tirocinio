@@ -75,6 +75,8 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                 if validator.check_response_constraint(output_text):
                     counter_response_satisfied += 1
 
+
+
             cprint(f"Sequences satisfying Response({activity_a}, {activity_b}): {counter_response_satisfied}")
 
         if not avoid_cfls_calculation:

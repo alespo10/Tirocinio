@@ -1,5 +1,5 @@
 class SequenceValidator:
-    def __init__(self, activity_a, activity_b):
+    def __init__(self, activity_a, activity_b=None):
         self.activity_a = activity_a
         self.activity_b = activity_b
 
