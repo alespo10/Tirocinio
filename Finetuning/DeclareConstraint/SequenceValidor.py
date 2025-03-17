@@ -31,6 +31,10 @@ class SequenceValidator:
         return True
 
     def check_chain_precedence(self, sequence):
+        contains_b = self.activity_b in sequence
+        if not contains_b:
+            return False
+
         for i in range(1, len(sequence)):
             if sequence[i] == self.activity_b and sequence[i - 1] != self.activity_a:
                 return False
