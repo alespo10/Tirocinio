@@ -22,6 +22,11 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
     OR = "O_Returned"
     OCO = "O_Create Offer"
 
+    TICT = "Take in charge ticket"
+    RT = "Resolve ticket"
+    AS = "Assign seriousness"
+    WA = "Wait"
+
     counter_response_satisfied = 0
     counter_chain_precedence = 0
     counter_init = 0
@@ -78,19 +83,19 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
 
                 print(f"Completed sequence: {output_text}")
 
-                validator = SequenceValidator(OSMO, OR)
+                validator = SequenceValidator(TICT, RT)
                 if validator.check_response_constraint(output_text):
                     counter_response_satisfied += 1
 
-                validator = SequenceValidator(OSMO, OR)
+                validator = SequenceValidator(TICT, RT)
                 if validator.check_chain_precedence(output_text):
                     counter_chain_precedence += 1
 
-                validator = SequenceValidator(OCO)
+                validator = SequenceValidator(AS)
                 if validator.init(output_text):
                     counter_init += 1
 
-                validator = SequenceValidator(OR, OCO)
+                validator = SequenceValidator(RT, WA)
                 if validator.check_not_coexistence(output_text):
                     counter_not_coexistence += 1
 
