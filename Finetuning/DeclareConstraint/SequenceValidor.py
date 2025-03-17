@@ -39,6 +39,9 @@ class SequenceValidator:
     def check_not_coexistence(self, sequence):
         contains_a = self.activity_a in sequence
         contains_b = self.activity_b in sequence
+        if not contains_a and not contains_b:
+            return False
         return not (contains_a and contains_b)
+
 
 

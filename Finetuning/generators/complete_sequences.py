@@ -99,10 +99,10 @@ def complete_sequences(model, tokenizer, validation_list, test_dataset, output_f
                 if validator.check_not_coexistence(output_text):
                     counter_not_coexistence += 1
 
-        cprint(f"Sequences satisfying Response({OSMO}, {OR}): {counter_response_satisfied}")
-        cprint(f"Sequences satisfying Chain Precedence({OSMO}, {OR}): {counter_chain_precedence}")
-        cprint(f"Sequences satisfying Init({OCO}): {counter_init}")
-        cprint(f"Sequences satisfying Not CoExistence({OR}, {OCO}): {counter_not_coexistence}")
+        cprint(f"Sequences satisfying Response({TICT}, {RT}): {counter_response_satisfied}")
+        cprint(f"Sequences satisfying Chain Precedence({TICT}, {RT}): {counter_chain_precedence}")
+        cprint(f"Sequences satisfying Init({AS}): {counter_init}")
+        cprint(f"Sequences satisfying Not CoExistence({RT}, {WA}): {counter_not_coexistence}")
 
         if not avoid_cfls_calculation:
             cfld_metric = support.get_log_similarity(np_validation_list, np_generated_list)
