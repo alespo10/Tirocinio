@@ -27,24 +27,36 @@ model.save_pretrained(save_path)
 tokenizer.save_pretrained(save_path)
 
 # Definizione della grammatica
-grammar = '''
-    start: activity (" , " activity)*
+# grammar = '''
+#     start: activity (" , " activity)*
+#
+#     activity: "The monthly cost" NUMBER "for the loan"
+#              | "calculated considering" TEXT
+#              | "based on the credit score" NUMBER
+#              | "the offered amount" NUMBER
+#              | "the first withdrawal amount" NUMBER
+#
+#     NUMBER: /[0-9]+(\.[0-9]+)?/
+#     TEXT: /[a-zA-Z0-9 ]+/
+# '''
 
-    activity: "The monthly cost" NUMBER "for the loan"
-             | "calculated considering" TEXT
-             | "based on the credit score" NUMBER
-             | "the offered amount" NUMBER
-             | "the first withdrawal amount" NUMBER
+grammar = """
+    declare Response(A, B)
 
-    NUMBER: /[0-9]+(\.[0-9]+)?/
-    TEXT: /[a-zA-Z0-9 ]+/
-'''
+    start: Response("O_Sent (mail and online)", "O_Returned")
+
+    Response: "The process started with " ACTIVITY " and then " MIDDLE* " it transitioned to " END_ACTIVITY "."
+
+    ACTIVITY: "0_Sent (mail and online)"
+    MIDDLE: "the system processing the request" | "a customer verification step" | "an intermediate review" | "further checks"
+    END_ACTIVITY: "0_Returned"
+"""
 
 # Caricamento di SynCode
 syn_llm = Syncode(model=save_path, grammar=grammar, parse_output_only=True)
 
 # Input per testare la generazione
-inp = "The monthly cost 408.29 for the loan, determined based on the credit score 0"
+inp = "The monthly cost 408.29 for the loan, determined based on the credit score 679"
 output = syn_llm.infer(inp)
 
 print(f"Syncode augmented LLM output:\n{output}")
